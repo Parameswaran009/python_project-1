@@ -1,4 +1,1 @@
 Flask==2.0.1
-SomeOtherLibrary==1.2.3
-AnotherLibrary>=3.0.0
-
