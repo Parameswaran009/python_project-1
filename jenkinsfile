@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_USERNAME = "parameswaran009"
         APP_NAME = "argocd"
-        IMAGE_TAG = "${BUILD_NUMBER}"
+        IMAGE_TAG = "${latest}"
         IMAGE_NAME = "${DOCKER_USERNAME}/${APP_NAME}"
         REGISTRY_CREDENTIALS = "dockerhub"
         SCANNER_HOME = tool "sonar-scanner"
@@ -19,7 +19,7 @@ pipeline {
 
         stage('Checkout from SCM') {
             steps {
-                checkout scm: [$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/Parameswaran009/gitops-argocd-project.git']]]
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Parameswaran009/python_project-1.git']])
             }
         }
 
@@ -54,7 +54,7 @@ pipeline {
         stage('Trigger ManifestUpdate') {
             steps {
                 echo "Triggering updatemanifestjob"
-                build job: 'updatemanifest', parameters: [string(name: 'DOCKERTAG', value: "${BUILD_NUMBER}")]
+                build job: 'Python-job', parameters: [string(name: 'DOCKERTAG', value: "${BUILD_NUMBER}")]
             }
         }
     }
