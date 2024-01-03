@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_USERNAME = "parameswaran009"
         APP_NAME = "argocd"
-        IMAGE_TAG = "${latest}"
+        IMAGE_TAG = "latest"
         IMAGE_NAME = "${DOCKER_USERNAME}/${APP_NAME}"
         REGISTRY_CREDENTIALS = "dockerhub"
         SCANNER_HOME = tool "sonar-scanner"
@@ -19,7 +19,7 @@ pipeline {
 
         stage('Checkout from SCM') {
             steps {
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Parameswaran009/python_project-1.git']])
+                checkout scm: [$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/Parameswaran009/python_project-1.git']]]
             }
         }
 
@@ -39,27 +39,21 @@ pipeline {
             }
         }
 
-	stage('TRIVY FS SCAN') {
-             steps {
-                 sh "trivy fs . > trivyfs.txt"
-             }
-        }
-
         stage('Build and Push Docker Image') {
             steps {
                 script {
                     def app = docker.build("${DOCKER_USERNAME}/${APP_NAME}")
-                    
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker') {
+
+                    docker.withRegistry('https://registry.hub.docker.com', REGISTRY_CREDENTIALS) {
                         app.push("${IMAGE_TAG}")
                     }
                 }
             }
         }
 
-	stage("TRIVY Image Scan"){
-            steps{
-                sh "trivy image parameswaran009/argocd:latest > trivyimage.txt"
+        stage('TRIVY FS SCAN') {
+            steps {
+                sh "trivy fs . > trivyfs.txt"
             }
         }
 
@@ -71,4 +65,3 @@ pipeline {
         }
     }
 }
-
