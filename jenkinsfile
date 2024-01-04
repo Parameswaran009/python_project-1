@@ -39,6 +39,12 @@ pipeline {
             }
         }
 
+        stage('TRIVY FS SCAN') {
+            steps {
+                sh "trivy fs . > trivyfs.txt"
+            }
+        }
+        
         stage('Build and Push Docker Image') {
             steps {
                 script {
@@ -51,9 +57,9 @@ pipeline {
             }
         }
 
-        stage('TRIVY FS SCAN') {
-            steps {
-                sh "trivy fs . > trivyfs.txt"
+        stage("TRIVY Image Scan"){
+            steps{
+                sh "trivy image parameswaran009/argocd:latest > trivyimage.txt" 
             }
         }
 
