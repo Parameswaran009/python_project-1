@@ -3,7 +3,7 @@ node {
 
     stage('Build image') {
   
-       app = docker.build("parameswaran/argocd")
+       app = docker.build("parameswaran009/argocd")
     }
 
     stage('Push image') {
